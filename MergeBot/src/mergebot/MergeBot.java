@@ -10,10 +10,13 @@ import java.io.IOException;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.HWND;
+
 public class MergeBot{
 		
 	private Desktop desktop;
-	private String kittyPath;
+	private String kittyPath, kittyTitle, kittyMenuTitle;
 	private Robot robot;
 	
 	public MergeBot(){
@@ -24,83 +27,69 @@ public class MergeBot{
 			e.printStackTrace();
 		}
 		desktop = Desktop.getDesktop();
-		kittyPath = "C:\\Users\\jedwards.MMO\\Desktop\\kitty.exe";
+		kittyPath = "C:\\Users\\jedwards\\Desktop\\kitty.exe";
+		kittyTitle = "192.168.0.4 - KiTTY";
+		kittyMenuTitle = "KiTTY Configuration";
 	}
 	
-	public boolean merge(){
+	public void startKitty(){
+		File kittyFile = new File(kittyPath);
+		Desktop desktop = Desktop.getDesktop();
 		try {
-			desktop.open(new File(kittyPath));
+			desktop.open(kittyFile);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		HWND hwnd = User32.INSTANCE.FindWindow(null, kittyMenuTitle);
+		User32.INSTANCE.ShowWindow(hwnd, 9);
+		User32.INSTANCE.SetForegroundWindow(hwnd);
 		
-		try {
-		    Thread.sleep(1000);                 //1000 milliseconds is one second.
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		    alertFailure();
-		}		
+		robot.keyPress(KeyEvent.VK_ENTER);
+		robot.keyRelease(KeyEvent.VK_ENTER);
 		
-		//Open Kitty
-		robot.keyPress(KeyEvent.VK_ALT);
+		robot.keyPress(KeyEvent.VK_J);		robot.keyRelease(KeyEvent.VK_J);
+		robot.keyPress(KeyEvent.VK_B);		robot.keyRelease(KeyEvent.VK_B);
+		robot.keyPress(KeyEvent.VK_E);		robot.keyRelease(KeyEvent.VK_E);
+		robot.keyPress(KeyEvent.VK_N);		robot.keyRelease(KeyEvent.VK_N);
+		robot.keyPress(KeyEvent.VK_T);		robot.keyRelease(KeyEvent.VK_T);
+		robot.keyPress(KeyEvent.VK_L);		robot.keyRelease(KeyEvent.VK_L);
+		robot.keyPress(KeyEvent.VK_E);		robot.keyRelease(KeyEvent.VK_E);
+		robot.keyPress(KeyEvent.VK_Y);		robot.keyRelease(KeyEvent.VK_Y);
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);
 		
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
-		
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
-		
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
-		
-		robot.keyPress(KeyEvent.VK_TAB);
-		robot.keyRelease(KeyEvent.VK_TAB);
-		
-		robot.keyRelease(KeyEvent.VK_ALT);
+		robot.keyPress(KeyEvent.VK_A);		robot.keyRelease(KeyEvent.VK_A);
+		robot.keyPress(KeyEvent.VK_0);		robot.keyRelease(KeyEvent.VK_0);
+		robot.keyPress(KeyEvent.VK_S);		robot.keyRelease(KeyEvent.VK_S);		
+		robot.keyPress(KeyEvent.VK_0);		robot.keyRelease(KeyEvent.VK_0);		
+		robot.keyPress(KeyEvent.VK_D);		robot.keyRelease(KeyEvent.VK_D);		
+		robot.keyPress(KeyEvent.VK_0);		robot.keyRelease(KeyEvent.VK_0);
+		robot.keyPress(KeyEvent.VK_F);		robot.keyRelease(KeyEvent.VK_F);
+		robot.keyPress(KeyEvent.VK_0);		robot.keyRelease(KeyEvent.VK_0);
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);
 		
 		try {
 		    Thread.sleep(2000);                 //1000 milliseconds is one second.
 		} catch(InterruptedException ex) {
 		    Thread.currentThread().interrupt();
 		    alertFailure();
-		}	
+		}			
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);
 		
-
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
+	}
+	
+	public void merge(){
+		HWND hwnd = User32.INSTANCE.FindWindow(null, kittyTitle);
+		if(hwnd == null){
+			System.out.println("no putty");
+			alertFailure();
+			return;
+		}
+		User32.INSTANCE.ShowWindow(hwnd, 9);
+		User32.INSTANCE.SetForegroundWindow(hwnd);
 		
-		try {
-		    Thread.sleep(2000);                 //1000 milliseconds is one second.
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		    alertFailure();
-		}	
-		
-		
-		//Login		
-		robot.keyPress(KeyEvent.VK_J);
-		robot.keyRelease(KeyEvent.VK_J);
-		robot.keyPress(KeyEvent.VK_B);
-		robot.keyRelease(KeyEvent.VK_B);
-		robot.keyPress(KeyEvent.VK_E);
-		robot.keyRelease(KeyEvent.VK_E);
-		robot.keyPress(KeyEvent.VK_N);
-		robot.keyRelease(KeyEvent.VK_N);
-		robot.keyPress(KeyEvent.VK_T);
-		robot.keyRelease(KeyEvent.VK_T);
-		robot.keyPress(KeyEvent.VK_L);
-		robot.keyRelease(KeyEvent.VK_L);
-		robot.keyPress(KeyEvent.VK_E);
-		robot.keyRelease(KeyEvent.VK_E);
-		robot.keyPress(KeyEvent.VK_Y);
-		robot.keyRelease(KeyEvent.VK_Y);
-		robot.keyPress(KeyEvent.VK_2);
-		robot.keyRelease(KeyEvent.VK_2);
-		
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		
+		robot.keyPress(KeyEvent.VK_2);		robot.keyRelease(KeyEvent.VK_2);
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);
 		
 		try {
 		    Thread.sleep(2000);                 //1000 milliseconds is one second.
@@ -110,64 +99,8 @@ public class MergeBot{
 		}	
 		
 		
-		robot.keyPress(KeyEvent.VK_A);
-		robot.keyRelease(KeyEvent.VK_A);
-		robot.keyPress(KeyEvent.VK_0);
-		robot.keyRelease(KeyEvent.VK_0);
-		robot.keyPress(KeyEvent.VK_S);
-		robot.keyRelease(KeyEvent.VK_S);
-		robot.keyPress(KeyEvent.VK_0);
-		robot.keyRelease(KeyEvent.VK_0);
-		robot.keyPress(KeyEvent.VK_D);
-		robot.keyRelease(KeyEvent.VK_D);
-		robot.keyPress(KeyEvent.VK_0);
-		robot.keyRelease(KeyEvent.VK_0);
-		robot.keyPress(KeyEvent.VK_F);
-		robot.keyRelease(KeyEvent.VK_F);
-		robot.keyPress(KeyEvent.VK_0);
-		robot.keyRelease(KeyEvent.VK_0);
-		
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		
-		try {
-		    Thread.sleep(3000);                 //1000 milliseconds is one second.
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		    alertFailure();
-		}	
-		
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		
-		
-		try {
-		    Thread.sleep(2000);                 //1000 milliseconds is one second.
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		    alertFailure();
-		}	
-		
-				
-		robot.keyPress(KeyEvent.VK_2);
-		robot.keyRelease(KeyEvent.VK_2);
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		
-		try {
-		    Thread.sleep(2000);                 //1000 milliseconds is one second.
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		    alertFailure();
-		}	
-		
-		
-		robot.keyPress(KeyEvent.VK_5);
-		robot.keyRelease(KeyEvent.VK_5);
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
+		robot.keyPress(KeyEvent.VK_5);		robot.keyRelease(KeyEvent.VK_5);
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);
 		
 		
 		try {
@@ -178,8 +111,7 @@ public class MergeBot{
 		}	
 		
 		robot.keyPress(KeyEvent.VK_SHIFT);
-		robot.keyPress(KeyEvent.VK_A);
-		robot.keyRelease(KeyEvent.VK_A);
+		robot.keyPress(KeyEvent.VK_A);		robot.keyRelease(KeyEvent.VK_A);
 		robot.keyRelease(KeyEvent.VK_SHIFT);
 		
 		try {
@@ -189,9 +121,7 @@ public class MergeBot{
 		    alertFailure();
 		}	
 		
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);
 		
 		try {
 		    Thread.sleep(5000);                 //1000 milliseconds is one second.
@@ -200,23 +130,12 @@ public class MergeBot{
 		    alertFailure();
 		}	
 		
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);		
-		
-		robot.keyPress(KeyEvent.VK_Q);
-		robot.keyRelease(KeyEvent.VK_Q);
-		robot.keyPress(KeyEvent.VK_ENTER);
-		robot.keyRelease(KeyEvent.VK_ENTER);
-		
-		return false;
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);
+		robot.keyPress(KeyEvent.VK_ENTER);		robot.keyRelease(KeyEvent.VK_ENTER);		
 	}
 	
 	public void alertFailure(){
-			JDialog failureDialog = new JDialog();
-			JOptionPane failurePane = new JOptionPane();
-			failurePane.showMessageDialog(failureDialog, "Merge Failed", "Merge Failed", JOptionPane.ERROR_MESSAGE);
+			
 	}
 
 }

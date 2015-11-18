@@ -15,38 +15,38 @@ import javax.swing.JButton;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.awt.Color;
+import java.io.File;
 
 public class MergeBotPanel extends JPanel {
 
 	private JButton btnMerge;
-	private JLabel lblDatetime;
-	private JLabel lblLastMerge;
+	private JLabel lblDatetime, lblLastMerge, lblTitle;
 	private SimpleDateFormat sdf;
-	private Timer timer;
+	private Timer timeTimer, delayTimer;
+	private Date currentTime;
 	private boolean validTime;
-	private Date startTime,endTime;
 	private MergeBot mergeBot;
 	private MergeBotListener mbl;
-
+	private String editFilePath;
+	private File currentEditFile;
+	private long currentEditTimeStamp;
+	
+	
+	
 	/**
 	 * Create the panel.
 	 */
 	public MergeBotPanel() {
 		mbl = new MergeBotListener();
 		sdf = new SimpleDateFormat("kk:mm");
-		try {
-			startTime = sdf.parse("06:00");
-			endTime = sdf.parse("18:00");
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		setPreferredSize(new Dimension(400, 150));
 		setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblTitle = new JLabel("Merge Bot");
+		lblTitle = new JLabel("Merge Bot");
 		lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitle.setFont(new Font("Trebuchet MS", Font.PLAIN, 20));
 		add(lblTitle, BorderLayout.NORTH);
@@ -56,7 +56,7 @@ public class MergeBotPanel extends JPanel {
 		add(lblLastMerge, BorderLayout.WEST);
 		
 		lblDatetime = new JLabel();
-		lblDatetime.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+		lblDatetime.setFont(new Font("Times New Roman", Font.PLAIN, 24));
 		lblDatetime.setHorizontalAlignment(SwingConstants.CENTER);
 		add(lblDatetime, BorderLayout.CENTER);
 		
@@ -67,42 +67,62 @@ public class MergeBotPanel extends JPanel {
 		btnMerge.addActionListener(mbl);
 		add(btnMerge, BorderLayout.EAST);
 		
-		timer = new Timer(1800000, mbl);
-		mergeBot = new MergeBot();
+		editFilePath = "Z:\\AAPRINT-EDIT";
+		currentEditFile = new File(editFilePath);
+		currentEditTimeStamp = currentEditFile.lastModified();
 		
+		timeTimer = new Timer(60000, mbl);
+		delayTimer = new Timer(30000,mbl);
+		mergeBot = new MergeBot();
+		validTime = checkTime();
 
+		timeTimer.start();
 	}
 	
 	private boolean checkTime(){
-		Date currentTime = new Date();
-		if(currentTime.compareTo(startTime)<0){
-			return false;
+		currentTime = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(currentTime);
+		int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+		if(hour > 8 && hour < 18){
+			return true;
 		}
-		if(currentTime.compareTo(endTime)>0){
-			return false;
-		}
-		return true;
+		return false;
 	}
 	
 	private class MergeBotListener implements ActionListener{
 
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if((e.getSource()==btnMerge  || e.getSource() == timer) && validTime ){
-				mergeBot.merge();
-				btnMerge.setText(sdf.format(new Date()));
-				validTime = checkTime();
-			}
-			if(e.getSource() == timer && !validTime){
-				if(checkTime()){
+			if(e.getSource() == btnMerge){
+				if(validTime){
 					mergeBot.merge();
-					btnMerge.setText(sdf.format(new Date()));
-					validTime = checkTime();
+					lblDatetime.setText(sdf.format(new Date()));
 				}
 			}
 			
+			if(e.getSource() == timeTimer){
+				if(validTime){
+					File tempFile = new File(editFilePath);
+					long tempTimeStamp = tempFile.lastModified();
+					if(currentEditTimeStamp != tempTimeStamp){
+						currentEditFile = new File(editFilePath);
+						currentEditTimeStamp = currentEditFile.lastModified();
+						delayTimer.start();
+					}
+				}
+				validTime = checkTime();
+			}
+			
+			if(e.getSource() == delayTimer){
+				if(validTime){
+					mergeBot.merge();
+					lblDatetime.setText(sdf.format(new Date()));
+				}
+			}
 		}
-		
 	}
 
 }
